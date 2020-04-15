@@ -1,4 +1,6 @@
 import itertools
+from math import prod
+
 import pandas as pd
 
 SPAM_PATH = "../data-collecting/data/processed/unique_dataset1_spam.csv"
@@ -22,7 +24,7 @@ def learning(spam_list, spam_count, ham_list, ham_count):
         spam_probability = 1.0
         ham_probability = 1.0
         for word in combination:
-            spam_probability *= spam_list[spam_list['word'] == word]['probability']
+            spam_probability *= math.prod(spam_list[spam_list['word'] == word]['probability'])
             ham_probability *= ham_list[ham_list['word'] == word]['probability']
 
         print(spam_probability)
