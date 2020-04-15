@@ -5,15 +5,15 @@ SPAM_PATH = "../data-collecting/data/processed/unique_dataset1_spam.csv"
 HAM_PATH = "../data-collecting/data/processed/unique_dataset1_ham.csv"
 
 
-def learning(spam_list, spam_count, ham_list, ham_count):
+def learning(df_spam, spam_count, df_ham, ham_count):
     # calculate probability instead of count
-    spam_list['probability'] = spam_list['count']/spam_count
-    ham_list['probability'] = ham_list['count']/ham_count
+    df_spam['col_probability'] = df_spam['col_count']/spam_count
+    df_ham['col_probability'] = df_ham['col_count']/ham_count
 
     # create combinations of words
-    c = list(itertools.combinations(spam_list['word'], 2))
+    c = list(itertools.combinations(df_spam.index.tolist(), 2))
     spam_combinations = set(c)
-    c = list(itertools.combinations(ham_list['word'], 2))
+    c = list(itertools.combinations(df_ham.index.tolist(), 2))
     ham_combinations = set(c)
 
     filters = []
@@ -22,8 +22,11 @@ def learning(spam_list, spam_count, ham_list, ham_count):
         spam_probability = 1.0
         ham_probability = 1.0
         for word in combination:
-            spam_probability *= spam_list[spam_list['word'] == word]['probability']
-            ham_probability *= ham_list[ham_list['word'] == word]['probability']
+            # todo
+            print(df_spam.at[word, 'col_probability'])
+            print(df_ham.at[word, 'col_probability'])
+            spam_probability *= df_spam.at[word, 'col_probability']
+            ham_probability *= df_ham.at[word, 'col_probability']
 
         print(spam_probability)
         print(ham_probability)
@@ -41,13 +44,13 @@ def learning(spam_list, spam_count, ham_list, ham_count):
 
 def main():
 
-    spam_set = pd.read_csv(SPAM_PATH, names=["word", "count"])
-    spam_count = spam_set[0:1]["count"].values[0]
+    spam_set = pd.read_csv(SPAM_PATH, index_col=0, names=['col_count'])
+    spam_count = spam_set[0:1]['col_count'].values[0]
     spam_set = spam_set[1:101]
     #spam_set.set_index('word', inplace=True)
 
-    ham_set = pd.read_csv(HAM_PATH, names=["word", "count"])
-    ham_count = ham_set[0:1]["count"].values[0]
+    ham_set = pd.read_csv(HAM_PATH, index_col=0, names=['col_count'])
+    ham_count = ham_set[0:1]['col_count'].values[0]
     ham_set = ham_set[1:101]
     #ham_set.set_index('word', inplace=True)
 
