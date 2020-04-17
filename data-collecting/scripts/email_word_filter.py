@@ -18,6 +18,7 @@ WORDS_TO_DELETE = "../data/processed/word_deleted.csv"
 WORD_MIN_COUNT = 10
 OUTPUT_SPAM = "../data/processed/filter_uq_dataset1_spam.csv"
 OUTPUT_HAM = "../data/processed/filter_uq_dataset1_ham.csv"
+SORT_WORDS = True
 
 
 # ----------------------------------------------- MAIN BODY ------------------------------------------------------------
@@ -66,6 +67,10 @@ def main(params):
         header_ham = header_ham.loc[0].values
         header_spam = header_spam.loc[0].values
 
+        if params.sort_words:
+            dt_ham = dt_ham.sort_values(by=['word'])
+            dt_spam = dt_spam.sort_values(by=['word'])
+
         dt_spam.to_csv(params.spam_output, index=False, header=header_spam)
         dt_ham.to_csv(params.ham_output, index=False, header=header_ham)
 
@@ -100,6 +105,9 @@ if __name__ == "__main__":
                         help="Output for given csv spam file")
     parser.add_argument('--ham_output', type=str, default=OUTPUT_HAM,
                         help="Output for given csv ham file")
+    # If true data will be sorted alphabetically
+    parser.add_argument('--sort_words', type=bool, default=SORT_WORDS,
+                        help="Output words will be sort words alphabetically")
 
     params = parser.parse_args()
 
