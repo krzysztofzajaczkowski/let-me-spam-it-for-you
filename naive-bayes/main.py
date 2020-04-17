@@ -1,8 +1,8 @@
 import itertools
 import pandas as pd
 
-SPAM_PATH = "../data-collecting/data/processed/unique_dataset1_spam.csv"
-HAM_PATH = "../data-collecting/data/processed/unique_dataset1_ham.csv"
+SPAM_PATH = "../data-collecting/data/processed/filter_uq_dataset1_spam.csv"
+HAM_PATH = "../data-collecting/data/processed/filter_uq_dataset1_ham.csv"
 
 
 def learning(df_spam, spam_count, df_ham, ham_count):
@@ -12,13 +12,11 @@ def learning(df_spam, spam_count, df_ham, ham_count):
 
     # create combinations of words
     c = list(itertools.combinations(df_spam.index.tolist(), 2))
-    spam_combinations = set(c)
-    c = list(itertools.combinations(df_ham.index.tolist(), 2))
-    ham_combinations = set(c)
+    combinations = set(c)
 
     filters = []
 
-    for combination in spam_combinations:
+    for combination in combinations:
         spam_probability = 1.0
         ham_probability = 1.0
         for word in combination:
@@ -41,6 +39,7 @@ def learning(df_spam, spam_count, df_ham, ham_count):
         filters.append(spam_filter)
 
     print(filters)
+
 
 def main():
 
