@@ -12,6 +12,8 @@ class OccurrenceMatrixBuilder:
         self.ham_mails_count = None
         self.words_in_emails = None
         self.avg_words_per_email = None
+        self.correlation_type = "avg_percentage"
+        self.correlation_distance = None
 
     def create_dataframes(self, dataset_path):
         """
@@ -46,3 +48,15 @@ class OccurrenceMatrixBuilder:
             self.avg_words_per_email = math.floor(self.words_in_emails / self.mails_count)
         else:
             raise ValueError("E-mails dataframe is None!")
+
+    def set_avg_percentage_correlation(self, percentage: int):
+        """
+            Set correlation type for correlation matrix to percentage of average number of words per email
+
+            :param percentage: percentage of average to calculate rounded maximum distance between related words
+        """
+        if self.avg_words_per_email is not None:
+            self.correlation_type = 'avg_percentage'
+            self.correlation_distance = round(self.avg_words_per_email * percentage)
+        else:
+            raise ValueError("Average number of words is None!")
