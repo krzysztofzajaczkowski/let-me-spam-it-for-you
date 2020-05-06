@@ -56,3 +56,17 @@ class MailContentFilter:
             self.dataset_df.to_csv(file_path, index=False, header=False)
         else:
             raise ValueError("Emails dataset is None!")
+
+    def export_filter_set(self, file_path):
+        """
+            Export filter set to csv file
+
+            :param file_path: path where file will be saved
+        """
+        if self.filtered_words_set is not None:
+            df = pd.DataFrame(list(self.filtered_words_set))
+            df.sort_values(0, ascending=True, inplace=True)
+            print(df)
+            df.to_csv(file_path, index=False, header=False)
+        else:
+            raise ValueError("Filter set is None!")
