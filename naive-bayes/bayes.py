@@ -13,8 +13,8 @@ def bayes(mail, df_spam, spam_count, df_ham, ham_count):
     for word in mail:
         # if word exist in either spam or ham database
         if word in df_spam.index or word in df_ham.index:
-            spam_probability *= df_spam['col_count'].loc[word]
-            ham_probability *= df_ham['col_count'].loc[word]
+            spam_probability *= df_spam['col_count'].loc[word]/spam_count
+            ham_probability *= df_ham['col_count'].loc[word]/ham_count
 
     estimated_count_spam = spam_probability * spam_count
     estimated_count_ham = ham_probability * ham_count
@@ -39,8 +39,7 @@ def main():
     ham_count = df_ham[0:1]['col_count'].values[0]
     df_ham = df_ham[1:]
 
-    mail = "please"
-
+    mail = "please give"
     print(bayes(mail, df_spam, spam_count, df_ham, ham_count))
 
 
