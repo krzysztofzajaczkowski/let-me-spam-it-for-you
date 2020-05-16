@@ -66,7 +66,6 @@ class MailContentFilter:
         if self.filtered_words_set is not None:
             df = pd.DataFrame(list(self.filtered_words_set))
             df.sort_values(0, ascending=True, inplace=True)
-            print(df)
             df.to_csv(file_path, index=False, header=False)
         else:
             raise ValueError("Filter set is None!")
