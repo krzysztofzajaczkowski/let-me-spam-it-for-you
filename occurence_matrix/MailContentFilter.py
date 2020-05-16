@@ -18,13 +18,13 @@ class MailContentFilter:
         header_names = ["content", "is_spam"]
         self.dataset_df = pd.read_csv(mail_dataset_path, names=header_names, header=None).dropna()
 
-    def load_filtered_words_set(self, filtered_words_path):
+    def load_filtered_words_set(self, filtered_words_path, header_names=["word", "occurrences_count"]):
         """
             Load filtered unique words dataframe and convert it to Python set to create filter for mails
 
             :param filtered_words_path: path to filtered unique words csv file
+            :param header_names: csv's header names
         """
-        header_names = ["word", "occurrences_count"]
         filtered_words_df = pd.read_csv(filtered_words_path, names=header_names, header=None, skiprows=1).dropna()
         # convert dataframe of words into a Python collection
         self.filtered_words_set = set(filtered_words_df.word)
