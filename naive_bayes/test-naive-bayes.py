@@ -1,9 +1,9 @@
 import pandas as pd
 from bayes import bayes
 
-SPAM_PATH = "../data-collecting/data/processed/filter_uq_dataset1_spam.csv"
-HAM_PATH = "../data-collecting/data/processed/filter_uq_dataset1_ham.csv"
-TEST_MAIL_PATH = "../data-collecting/data/raw/spam_or_not_spam.csv"
+SPAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_spam.csv"
+HAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"
+TEST_MAIL_PATH = "../data_collecting/data/raw/spam_or_not_spam.csv"
 
 
 def test_naive_bayes():

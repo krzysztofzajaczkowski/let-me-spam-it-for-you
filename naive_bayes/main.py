@@ -2,8 +2,8 @@ import itertools
 import pandas as pd
 from scipy.special import comb
 
-SPAM_PATH = "../data-collecting/data/processed/filter_uq_dataset1_spam.csv"
-HAM_PATH = "../data-collecting/data/processed/filter_uq_dataset1_ham.csv"
+SPAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_spam.csv"
+HAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"
 
 
 def learning(df_spam, spam_count, df_ham, ham_count, word_count):
