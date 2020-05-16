@@ -16,3 +16,4 @@ build_word_matrix_for_mail:
   filtered_words_set_file_path: "../data/filtered_for_learning/filtered_words_set.csv"
   mail_file_path: "mail.txt"
   mail_matrix_output_file_path: "read_mail_matrix.csv"
+  correlation_distance: 5
