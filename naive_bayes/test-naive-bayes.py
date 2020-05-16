@@ -1,5 +1,5 @@
 import pandas as pd
-from bayes import bayes
+from naive_bayes.bayes import bayes
 
 SPAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_spam.csv"
 HAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"

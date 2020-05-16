@@ -1,3 +1,20 @@
+from nltk.stem import LancasterStemmer
+
+
+def string_stemmer(text):
+    """
+    :param text: words from email
+    :return: string with stemmed words
+    """
+    stemmer = LancasterStemmer()
+    stemmed_list = []
+
+    for word in text.split(' '):
+        stemmed_list.append(stemmer.stem(word))
+
+    return ' '.join(word for word in stemmed_list)
+
+
 def bayes(mail, df_spam, spam_count, df_ham, ham_count):
     """
 
@@ -12,6 +29,7 @@ def bayes(mail, df_spam, spam_count, df_ham, ham_count):
     # Init values
     spam_probability = 1.0
     ham_probability = 1.0
+    mail = string_stemmer(mail)
     mail = mail.lower().split(" ")
     mail = list(set(mail))
 
