@@ -40,8 +40,23 @@ def main():
     ham_count = df_ham[0:1]['col_count'].values[0]
     df_ham = df_ham[1:]
 
-    mail = " "
-    print(bayes(mail, df_spam, spam_count, df_ham, ham_count))
+    # testing
+    dataset_path = "../data-collecting/data/raw/spam_or_not_spam.csv"
+
+    header_names = ["content", "is_spam"]
+    mails_df = pd.read_csv(dataset_path, names=header_names, header=None).dropna()
+    print(mails_df)
+
+    counter = 0
+    for i in mails_df.index:
+        mail = mails_df.iloc[i]['content']
+        is_spam = mails_df.iloc[i]['is_spam']
+        p = bayes(mail, df_spam, spam_count, df_ham, ham_count)
+
+        if p > 0.5 and not is_spam:
+            counter += 1
+
+    print(counter)
 
 
 main()
