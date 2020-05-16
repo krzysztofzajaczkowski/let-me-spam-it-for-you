@@ -1,5 +1,6 @@
 import pandas as pd
 import math
+from collections import defaultdict
 
 
 class OccurrenceMatrixBuilder:
@@ -14,6 +15,10 @@ class OccurrenceMatrixBuilder:
         self.avg_words_per_email = None
         self.correlation_type = "avg_percentage"
         self.correlation_distance = None
+        self.words_list = None
+        self.ham_words_matrix_df = None
+        self.spam_words_matrix_df = None
+        self.mail_words_matrix_df = None
 
     def create_dataframes(self, dataset_path):
         """
@@ -57,6 +62,86 @@ class OccurrenceMatrixBuilder:
         """
         if self.avg_words_per_email is not None:
             self.correlation_type = 'avg_percentage'
-            self.correlation_distance = round(self.avg_words_per_email * percentage)
+            self.correlation_distance = round(self.avg_words_per_email * percentage / 100)
         else:
             raise ValueError("Average number of words is None!")
+
+    def set_correlation_distance_explicitly(self, correlation_distance: int):
+        self.correlation_type = 'set_explicitly'
+        self. correlation_distance = correlation_distance
+
+    def load_words_list(self, filtered_words_path):
+        """
+            Load filtered unique words dataframe and convert it to Python set to create filter for mails
+
+            :param filtered_words_path: path to filtered unique words csv file
+        """
+        header_names = ["word"]
+        filtered_words_df = pd.read_csv(filtered_words_path, names=header_names, header=None, skiprows=1).dropna()
+        # convert dataframe of words into a Python collection
+        self.words_list = list(filtered_words_df.word)
+
+    def create_words_matrix(self):
+        if self.words_list is not None:
+            words_matrix = defaultdict(dict)
+            for x in self.words_list:
+                for y in self.words_list:
+                    words_matrix[x][y] = 0
+                    words_matrix[y][x] = 0
+            return words_matrix
+        else:
+            raise ValueError("Words list is None!")
+
+    def read_mail_to_words_matrix(self, words_matrix, mail: str):
+        if None not in [self.correlation_distance, self.words_list]:
+            content = mail.split()
+            for i in range(len(content) - self.correlation_distance):
+                for j in range(i, i + self.correlation_distance):
+                    if content[i] in self.words_list and content[j] in self.words_list:
+                        if i is not j:
+                            words_matrix[content[j]][content[i]] = words_matrix[content[j]][content[i]] + 1
+                            words_matrix[content[i]][content[j]] = words_matrix[content[i]][content[j]] + 1
+        else:
+            raise ValueError("Correlation distance or words list are None!")
+
+    def save_words_matrix_to_csv(self, words_matrix_df, file_path):
+        words_matrix_df = words_matrix_df[words_matrix_df['n_o_occurences'] > 0]
+        words_matrix_df.to_csv(file_path, index=True, header=True)
+
+    def create_data_frame_from_words_matrix(self, words_matrix):
+        if self.words_list is not None:
+            words_matrix_df = pd.DataFrame.from_dict(
+                {(i, j): words_matrix[i][j] for i in self.words_list for j in self.words_list}, orient="index",
+                columns=['n_o_occurences'])
+            words_matrix_df.index = pd.MultiIndex.from_tuples(words_matrix_df.index, names=['word_1', 'word_2'])
+            return words_matrix_df
+        else:
+            raise ValueError("Words list is None!")
+
+    def build_ham_matrix(self):
+        if self.ham_df is not None and self.words_list is not None and self.correlation_distance is not None:
+            words_matrix = self.create_words_matrix()
+            for i in range(len(self.ham_df)):
+                content = self.ham_df.iloc[i]['content']
+                self.read_mail_to_words_matrix(words_matrix, content)
+            self.ham_words_matrix_df = self.create_data_frame_from_words_matrix(words_matrix)
+        else:
+            raise ValueError("ham mails dataframe / list of words / correlation distance are None!")
+
+    def build_spam_matrix(self):
+        if self.spam_df is not None and self.words_list is not None and self.correlation_distance is not None:
+            words_matrix = self.create_words_matrix()
+            for i in range(len(self.spam_df)):
+                content = self.spam_df.iloc[i]['content']
+                self.read_mail_to_words_matrix(words_matrix, content)
+            self.spam_words_matrix_df = self.create_data_frame_from_words_matrix(words_matrix)
+        else:
+            raise ValueError("spam mails dataframe / list of words / correlation distance are None!")
+
+    def build_mail_matrix(self):
+        self.mail_words_matrix_df = self.spam_words_matrix_df + self.ham_words_matrix_df
+
+    def save_matrices(self, ham_file_path, spam_file_path, mail_file_path):
+        self.save_words_matrix_to_csv(self.ham_words_matrix_df, ham_file_path)
+        self.save_words_matrix_to_csv(self.spam_words_matrix_df, spam_file_path)
+        self.save_words_matrix_to_csv(self.mail_words_matrix_df, mail_file_path)
