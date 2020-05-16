@@ -5,7 +5,7 @@ from OccurrenceMatrixBuilder import OccurrenceMatrixBuilder
 def create_occurence_matrices():
     with open("settings.yaml", "r") as config_file:
         config = yaml.safe_load(config_file)
-        mail_content_filter_settings = config['OccurenceMatrixBuilder']
+        mail_content_filter_settings = config['create_occurence_matrices']
         filtered_mails_file_path = mail_content_filter_settings['filtered_mails_file_path']
         filtered_words_set_file_path = mail_content_filter_settings['filtered_words_set_file_path']
         ham_words_matrix = mail_content_filter_settings['ham_words_matrix']
