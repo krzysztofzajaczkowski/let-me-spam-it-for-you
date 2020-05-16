@@ -13,6 +13,6 @@ create_occurence_matrices:
   explicit_correlation_distance: 5
   percentage_of_avg_n_o_words_correlation: 0.2
 build_word_matrix_for_mail:
-  ham_words_matrix: "../data/correlation_matrices/ham_words_matrix.csv"
-  spam_words_matrix: "../data/correlation_matrices/spam_words_matrix.csv"
-  mail_words_matrix: "../data/correlation_matrices/mail_words_matrix.csv"
+  filtered_words_set_file_path: "../data/filtered_for_learning/filtered_words_set.csv"
+  mail_file_path: "mail.txt"
+  mail_matrix_output_file_path: "read_mail_matrix.csv"
