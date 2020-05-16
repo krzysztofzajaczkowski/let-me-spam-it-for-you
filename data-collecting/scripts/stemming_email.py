@@ -33,6 +33,7 @@ def list_stemmer(word_list):
 # Init
 PATH_DATASET1 = "../data/raw/org_spamham.csv"
 PATH_DATASET2 = "../data/raw/org_spam_or_not_spam.csv"
+PATH_WORD_DELETE = "../data/processed/word_deleted.csv"
 PATH_SAVE_DATASET1 = "../data/raw/spamham.csv"
 PATH_SAVE_DATASET2 = "../data/raw/spam_or_not_spam.csv"
 HEADER_NAMES = ["text", "is_spam"]
@@ -40,11 +41,14 @@ HEADER_NAMES = ["text", "is_spam"]
 # Load data to dataframe
 df_dataset1 = pd.read_csv(PATH_DATASET1, names=HEADER_NAMES, header=None).dropna()
 df_dataset2 = pd.read_csv(PATH_DATASET2, names=HEADER_NAMES, header=None).dropna()
+df_word_delete = pd.read_csv(PATH_WORD_DELETE, names=["text"], header=None).dropna()
 
 # Preprocessed data in email
 df_dataset1["text"] = df_dataset1["text"].apply(lambda text: string_stemmer(text))
 df_dataset2["text"] = df_dataset2["text"].apply(lambda text: string_stemmer(text))
+df_word_delete["text"] = df_word_delete["text"].apply(lambda text: string_stemmer(text))
 
 # Save
 df_dataset1.to_csv(PATH_SAVE_DATASET1, header=False, index=False)
 df_dataset2.to_csv(PATH_SAVE_DATASET2, header=False, index=False)
+df_word_delete.to_csv(PATH_WORD_DELETE, header=False, index=False)
