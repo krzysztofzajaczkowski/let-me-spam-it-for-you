@@ -4,7 +4,7 @@ import pandas as pd
 import logging
 
 
-def create_logger(name):
+def _create_logger(name):
     """
     create logger fo script
 
@@ -46,9 +46,19 @@ SORT_WORDS = True
 
 # ----------------------------------------------- MAIN BODY ------------------------------------------------------------
 
-def main(params):
+def dataset_filter(params):
     """
-    Script that remove unnecessary words from processed csv files by data-notebook.ipynb.
+    :param params:
+        params.words_remove: path to csv file with words to delete
+        params.words_min: minimum count of words to stay in files
+        params.sort_words: boolean value tells that output words will be sorted alphabetically
+        params.spam_input: path to csv file with spam email dataset to filter
+        params.ham_input: path to csv file with ham email dataset to filter
+        params.spam_output: path to output for given csv spam file
+        params.ham_output: path to output for given csv spam file
+
+
+    Script that remove unnecessary words from processed csv files by generate-data-notebook.ipynb.
     It removes:
     - Words that occurred in less than minimum emails
     - Words shorter than 2
@@ -56,7 +66,7 @@ def main(params):
     - Words that loaded from given csv files
     """
 
-    log = create_logger('email_word_filter')
+    log = _create_logger('email_word_filter')
     try:
         # # --- Init data ---
         # read files
@@ -151,4 +161,4 @@ if __name__ == '__main__':
                         help='Output for given csv ham file')
 
     params = parser.parse_args()
-    main(params)
+    dataset_filter(params)

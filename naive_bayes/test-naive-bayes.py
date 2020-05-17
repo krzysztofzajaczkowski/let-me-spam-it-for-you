@@ -3,7 +3,7 @@ from naive_bayes.bayes import bayes
 
 SPAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_spam.csv"
 HAM_PATH = "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"
-TEST_MAIL_PATH = "../data_collecting/data/raw/spam_or_not_spam.csv"
+TEST_MAIL_PATH = "../data_collecting/data/raw/test_spamham.csv"
 
 
 def test_naive_bayes():

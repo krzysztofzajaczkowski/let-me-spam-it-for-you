@@ -8,7 +8,7 @@ Include files to process and collect data<br>
         - [word_deleted.csv](data_collecting/data/raw/word_deleted.csv) - words to delete from emails
         - and other files
 - [scripts](data_collecting/scripts) - Scripts for processed data
-    - [data-notebook.ipynb](data_collecting/scripts/data-notebook.ipynb) - jupyter notebook to collect words from datasets
+    - [data-notebook.ipynb](data_collecting/scripts/generate-data-notebook.ipynb) - jupyter notebook to collect words from datasets
     - [email_word_filter.py](data_collecting/scripts/email_word_filter.py) - script to filter files from unnecessary words
 
 ## functions

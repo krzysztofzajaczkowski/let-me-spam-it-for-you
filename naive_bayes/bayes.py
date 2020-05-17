@@ -1,23 +1,8 @@
-from nltk.stem import LancasterStemmer
-
-
-def string_stemmer(text):
-    """
-    :param text: words from email
-    :return: string with stemmed words
-    """
-    stemmer = LancasterStemmer()
-    stemmed_list = []
-
-    for word in text.split(' '):
-        stemmed_list.append(stemmer.stem(word))
-
-    return ' '.join(word for word in stemmed_list)
+from data_collecting.scripts.functions.stemming_email import string_stemmer
 
 
 def bayes(mail, df_spam, spam_count, df_ham, ham_count):
     """
-
     :param mail: string value with email text
     :param df_spam: words from with counter in how many mail word appear
     :param spam_count: All spam emails
