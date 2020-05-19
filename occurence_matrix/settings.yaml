@@ -1,0 +1,19 @@
+filter_mails:
+  raw_emails_file_path: "../data_collecting/data/raw/spamham.csv"
+  filtered_words_file_path: "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"
+  filtered_mails_file_path: "../data/filtered_for_learning/filtered_mails.csv"
+  filtered_words_set_file_path: "../data/filtered_for_learning/filtered_words_set.csv"
+create_occurence_matrices:
+  filtered_mails_file_path: "../data/filtered_for_learning/filtered_mails.csv"
+  filtered_words_set_file_path: "../data/filtered_for_learning/filtered_words_set.csv"
+  ham_words_matrix: "../data/correlation_matrices/ham_words_matrix.csv"
+  spam_words_matrix: "../data/correlation_matrices/spam_words_matrix.csv"
+  mail_words_matrix: "../data/correlation_matrices/mail_words_matrix.csv"
+  correlation_type: "set_explicitly"
+  explicit_correlation_distance: 5
+  percentage_of_avg_n_o_words_correlation: 0.2
+build_word_matrix_for_mail:
+  filtered_words_set_file_path: "../data/filtered_for_learning/filtered_words_set.csv"
+  mail_file_path: "mail.txt"
+  mail_matrix_output_file_path: "read_mail_matrix.csv"
+  correlation_distance: 5
