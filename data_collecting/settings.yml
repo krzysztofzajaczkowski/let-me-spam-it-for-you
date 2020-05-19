@@ -1,0 +1,34 @@
+proces_stages:                                              # 1 to start stage; 0 - to skip
+  preprocess: 1
+  collect: 1
+  filter: 1
+filter_stages:                                              # 1 to start filter option; 0 - to skip
+  drop_minimum_count: 1
+  drop_minimum_length: 1
+  drop_stop_words: 1
+  sort_alphabetically: 0                                    # Sort filtered values in alphabetical order
+dataset_params:
+  dataset_number: 1                                         # Number of dataset to use
+  headers: ["text", "is_spam"]                              # Headers to all csv in /data/raw csv
+  training_size: 0.8                                        # Percent from 0 to 1
+  minimum_count: 10                                         # Minimum number of mail containing word
+  minimum_length: 2                                         # Minimum length of word
+  stop_words_path: "./data/processed/word_deleted.csv"      # Path to save stop words
+dataset1:
+  raw_path: "./data/raw/org_spamham.csv"                    # Path to original raw dataset1
+  save_path: "./data/raw/spamham.csv"                       # Path to save training data to dataset1
+  test_path: "./data/raw/test_spamham.csv"                  # Path to save tests to dataset1
+  unique_path: "./data/processed/unique_dataset1.csv"       # Path to collected data
+  unique_spam_path: "./data/processed/unique_dataset1_spam.csv" # Path to collected data with spam
+  unique_ham_path: "./data/processed/unique_dataset1_ham.csv"   # Path to collected data with ham
+  filter_spam_path: "./data/processed/filter_uq_dataset1_spam.csv"  #
+  filter_ham_path: "./data/processed/filter_uq_dataset1_ham.csv"    #
+dataset2:
+  raw_path: "./data/raw/org_spam_or_not_spam.csv"           # Path to original raw dataset2
+  save_path: "./data/raw/spam_or_not_spam.csv"              # Path to save training data to dataset2
+  test_path: "./data/raw/test_spam_or_not_spam.csv"         # Path to save tests to dataset2
+  unique_path: "./data/processed/unique_dataset2.csv"       # Path to collected data
+  unique_spam_path: "./data/processed/unique_dataset2_spam.csv" # Path to collected data with spam
+  unique_ham_path: "./data/processed/unique_dataset2_ham.csv"   # Path to collected data with ham
+  filter_spam_path: "./data/processed/filter_uq_dataset2_spam.csv"  #
+  filter_ham_path: "./data/processed/filter_uq_dataset2_ham.csv"    #

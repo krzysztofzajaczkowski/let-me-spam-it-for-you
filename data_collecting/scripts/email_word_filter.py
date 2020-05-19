@@ -1,28 +1,8 @@
 import sys
 import argparse
 import pandas as pd
-import logging
 
-
-def _create_logger(name):
-    """
-    create logger fo script
-
-    :param name: name of logger
-    :return: logger
-    """
-    log_format = '%(asctime)s - %(name)s - %(levelname)s: %(message)s'
-    formatter = logging.Formatter(log_format)
-
-    ch = logging.StreamHandler()  # console handler
-    ch.setLevel(logging.INFO)
-    ch.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel('INFO')
-    logger.addHandler(ch)
-    return logger
-
+from data_collecting.scripts.functions.logger import create_logger
 
 # ------------------------------------------------- CONSTS -------------------------------------------------------------
 # PATHS
@@ -45,7 +25,6 @@ SORT_WORDS = True
 
 
 # ----------------------------------------------- MAIN BODY ------------------------------------------------------------
-
 def dataset_filter(params):
     """
     :param params:
@@ -66,7 +45,7 @@ def dataset_filter(params):
     - Words that loaded from given csv files
     """
 
-    log = _create_logger('email_word_filter')
+    log = create_logger('email_word_filter')
     try:
         # # --- Init data ---
         # read files
