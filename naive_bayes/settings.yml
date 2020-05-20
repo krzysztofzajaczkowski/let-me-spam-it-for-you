@@ -1,0 +1,17 @@
+proces_stages:                                                      # 1 to start stage; 0 - to skip
+  stemm_data: 1                                                     # Stemm mails
+  naive_beyes: 1                                                    # Stemming data
+  matrix_beyes: 1                                                   # Create new data from dataset
+dataset_params:
+  dataset_number: 1                                                 # Number of dataset to use
+  headers: ["text", "is_spam"]                                      # Headers to all csv in /data/raw csv
+  spam_threshold: 0.5                                               # Classify mail as spam
+  correlation_distance: 5
+dataset1:
+  test_path: "../data_collecting/data/raw/test_spamham.csv"                          # Path to save tests to dataset1
+  filter_spam_path: "../data_collecting/data/processed/filter_uq_dataset1_spam.csv"  #
+  filter_ham_path: "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"    #
+dataset2:
+  test_path: "../data_collecting/data/raw/test_spam_or_not_spam.csv"                 # Path to save tests to dataset2
+  filter_spam_path: "../data_collecting/data/processed/filter_uq_dataset2_spam.csv"  #
+  filter_ham_path: "../data_collecting/data/processed/filter_uq_dataset2_ham.csv"    #

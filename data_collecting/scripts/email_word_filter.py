@@ -2,7 +2,7 @@ import sys
 import argparse
 import pandas as pd
 
-from data_collecting.scripts.functions.logger import create_logger
+from data_collecting.functions.logger import create_logger
 
 # ------------------------------------------------- CONSTS -------------------------------------------------------------
 # PATHS

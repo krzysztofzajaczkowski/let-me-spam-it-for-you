@@ -3,12 +3,13 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 
-from data_collecting.scripts.functions.logger import create_logger
-from data_collecting.scripts.functions.stemming_email import string_stemmer
-from data_collecting.scripts.functions.generate_dataset import generate_dataset
+from data_collecting.functions.logger import create_logger
+from data_collecting.functions.stemming_email import string_stemmer
+from data_collecting.functions.generate_dataset import generate_dataset
 
 
-def create_dict_unique(df_org, header, split_char=' '):
+# ----------------------------------------------- FUNCTIONS ------------------------------------------------------------
+def _create_dict_unique(df_org, header, split_char=' '):
     """
     Split text data to numpy array and create column with unique word dictionary
 
@@ -29,7 +30,7 @@ def create_dict_unique(df_org, header, split_char=' '):
     return df
 
 
-def concat_dict(df):
+def _concat_dict(df):
     """
     Calc dict with add up all words from dataframe
 
@@ -125,14 +126,14 @@ def collect_dataset_process():
         log.info("Ham data size: {0}".format(df_ham.shape[0]))
 
         # Create dataframe with dict for every email
-        df_dict = create_dict_unique(df, dataset_header)
-        df_dict_spam = create_dict_unique(df_spam, dataset_header)
-        df_dict_ham = create_dict_unique(df_ham, dataset_header)
+        df_dict = _create_dict_unique(df, dataset_header)
+        df_dict_spam = _create_dict_unique(df_spam, dataset_header)
+        df_dict_ham = _create_dict_unique(df_ham, dataset_header)
 
         # Sum unique values from dicts in dataframe into one dictionary
-        uq_dict = concat_dict(df_dict)
-        uq_dict_spam = concat_dict(df_dict_spam)
-        uq_dict_ham = concat_dict(df_dict_ham)
+        uq_dict = _concat_dict(df_dict)
+        uq_dict_spam = _concat_dict(df_dict_spam)
+        uq_dict_ham = _concat_dict(df_dict_ham)
         log.info("Number of unique words in dataset: {0}".format(len(Counter(uq_dict))))
         log.info("Number of unique words in spam dataset: {0}".format(len(Counter(uq_dict_spam))))
         log.info("Number of unique words in ham dataset: {0}".format(len(Counter(uq_dict_ham))))
