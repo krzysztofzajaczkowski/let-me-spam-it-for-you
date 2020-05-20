@@ -11,6 +11,8 @@ dataset1:
   test_path: "../data_collecting/data/raw/test_spamham.csv"                          # Path to save tests to dataset1
   filter_spam_path: "../data_collecting/data/processed/filter_uq_dataset1_spam.csv"  #
   filter_ham_path: "../data_collecting/data/processed/filter_uq_dataset1_ham.csv"    #
+  ham_words_matrix: "../data_collecting/data/correlation_matrices/ham_words_matrix.csv"
+  spam_words_matrix: "../data_collecting/data/correlation_matrices/spam_words_matrix.csv"
 dataset2:
   test_path: "../data_collecting/data/raw/test_spam_or_not_spam.csv"                 # Path to save tests to dataset2
   filter_spam_path: "../data_collecting/data/processed/filter_uq_dataset2_spam.csv"  #

@@ -88,15 +88,17 @@ def testing_dataset_process():
     if stages["matrix_beyes"]:
         log.info("Start testing matrix-bayes method...")
 
+        ham_words_matrix_path = config[dataset_number]["ham_words_matrix"]
+        spam_words_matrix_path = config[dataset_number]["spam_words_matrix"]
+
         # Load spam words with first column as index and second as value
         df_spam = pd.read_csv(dataset_paths["filter_spam_path"], index_col=0, names=['col_count'])
         spam_count = df_spam[0:1]['col_count'].values[0]
         df_ham = pd.read_csv(dataset_paths["filter_ham_path"], index_col=0, names=['col_count'])
         ham_count = df_ham[0:1]['col_count'].values[0]
 
-        # TODO: podpiąć ściezki z settingsów
-        df_spam = load_words_matrix("../data/correlation_matrices/spam_words_matrix.csv")
-        df_ham = load_words_matrix("../data/correlation_matrices/ham_words_matrix.csv")
+        df_spam = load_words_matrix(spam_words_matrix_path)
+        df_ham = load_words_matrix(ham_words_matrix_path)
 
         log.info("Dataset on occurence matrix with: {0} ham mails; {1} spam mail".format(ham_count, spam_count))
 
