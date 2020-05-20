@@ -9,6 +9,10 @@ from data_collecting.functions.generate_dataset import generate_dataset
 
 
 # ----------------------------------------------- FUNCTIONS ------------------------------------------------------------
+from occurence_matrix.MailContentFilter import MailContentFilter
+from occurence_matrix.OccurrenceMatrixBuilder import OccurrenceMatrixBuilder
+
+
 def _create_dict_unique(df_org, header, split_char=' '):
     """
     Split text data to numpy array and create column with unique word dictionary
@@ -259,6 +263,22 @@ def collect_dataset_process():
             df_ham = df_ham.sort_values(by=['word'])
             df_spam = df_spam.sort_values(by=['word'])
 
+            # Filter mails content
+            if filter_stages['filter_content']:
+                raw_emails_file_path = config[dataset_number]['raw_path']
+                filtered_words_file_path = config[dataset_number]['filter_ham_path']
+                filtered_mails_file_path = config[dataset_number]['filtered_mails_file_path']
+                filtered_words_set_file_path = config[dataset_number]['filtered_words_set_file_path']
+
+                # filter mails
+                mail_filter = MailContentFilter()
+                mail_filter.load_dataframe(raw_emails_file_path)
+                mail_filter.load_filtered_words_set(filtered_words_file_path)
+                mail_filter.filter_dataset()
+                # save filtered content and set of filter words to csv files
+                mail_filter.export_dataset(filtered_mails_file_path)
+                mail_filter.export_filter_set(filtered_words_set_file_path)
+
         # Save
         df_spam.to_csv(dataset_paths["filter_spam_path"], index=False, header=header_spam.loc[0].values)
         df_ham.to_csv(dataset_paths["filter_ham_path"], index=False, header=header_ham.loc[0].values)
@@ -290,6 +310,40 @@ def collect_dataset_process():
         log.info("Saved unfiltered spam data to: {0}".format(dataset_paths["filter_spam_path"]))
         log.info("Saved unfiltered ham data to: {0}".format(dataset_paths["filter_ham_path"]))
         log.info("Saving unfiltered data ended successfully\n")
+
+    if stages["correlation_matrices"]:
+
+        log.info("Start bulding correlation matrices data...")
+
+        correlation_matrices_options = config["correlation_matrices"]
+        filtered_mails_file_path = config[dataset_number]['filtered_mails_file_path']
+        filtered_words_set_file_path = config[dataset_number]['filtered_words_set_file_path']
+        ham_words_matrix = correlation_matrices_options['ham_words_matrix']
+        spam_words_matrix = correlation_matrices_options['spam_words_matrix']
+        mail_words_matrix = correlation_matrices_options['mail_words_matrix']
+        correlation_type = correlation_matrices_options['correlation_type']
+        explicit_correlation_distance = correlation_matrices_options['explicit_correlation_distance']
+        percentage_of_avg_n_o_words_correlation = correlation_matrices_options['percentage_of_avg_n_o_words_correlation']
+
+        # build occurence matrices
+        builder = OccurrenceMatrixBuilder()
+        builder.create_dataframes(filtered_mails_file_path)
+        builder.calculate_average_words_per_mail()
+        if correlation_type == 'set_explicitly':
+            builder.set_correlation_distance_explicitly(explicit_correlation_distance)
+        if correlation_type == 'avg_percentage':
+            builder.set_avg_percentage_correlation(percentage_of_avg_n_o_words_correlation)
+        builder.load_words_list(filtered_words_set_file_path)
+        builder.build_ham_matrix()
+        builder.build_spam_matrix()
+        builder.build_mail_matrix()
+        log.info("Saving ham emails correlation matrix to: {0}".format(ham_words_matrix))
+        log.info("Saving spam emails correlation matrix to: {0}".format(spam_words_matrix))
+        log.info("Saving all emails correlation matrix to: {0}".format(mail_words_matrix))
+        builder.save_matrices(ham_words_matrix, spam_words_matrix, mail_words_matrix)
+
+    else:
+        log.info("Skip building correlation matrices data...")
 
     log.info("Collecting data process ended.\n")
 

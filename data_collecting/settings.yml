@@ -7,6 +7,14 @@ filter_stages:                                              # 1 to start filter 
   drop_minimum_length: 1
   drop_stop_words: 1
   sort_alphabetically: 0                                    # Sort filtered values in alphabetical order
+  filter_content : 1
+correlation_matrices:
+  correlation_type: "set_explicitly"                        # Set type of calculating correlation distance
+  explicit_correlation_distance: 5                          # Explicitly set correlation distance if "set_explicitly" option
+  percentage_of_avg_n_o_words_correlation: 0.2              # From 0 to 1, percentage of avg number of words per email as correlation distance
+  ham_words_matrix: "./data/correlation_matrices/ham_words_matrix.csv"   # Path to correlation matrix of ham mails
+  spam_words_matrix: "./data/correlation_matrices/spam_words_matrix.csv" # Path to correlation matrix of spam mails
+  mail_words_matrix: "./data/correlation_matrices/mail_words_matrix.csv" # Path to correlation matrix of all mails
 dataset_params:
   dataset_number: 1                                         # Number of dataset to use
   headers: ["text", "is_spam"]                              # Headers to all csv in /data/raw csv
@@ -24,6 +32,8 @@ dataset1:
   unique_ham_path: "./data/processed/unique_dataset1_ham.csv"   # Path to collected data with ham
   filter_spam_path: "./data/processed/filter_uq_dataset1_spam.csv"  #
   filter_ham_path: "./data/processed/filter_uq_dataset1_ham.csv"    #
+  filtered_mails_file_path: "./data/filtered_for_learning/filtered_mails.csv"  # Path to filtered emails content
+  filtered_words_set_file_path: "./data/filtered_for_learning/filtered_words_set.csv"  # Path to set of filter words
 dataset2:
   raw_path: "./data/raw/org_spam_or_not_spam.csv"           # Path to original raw dataset2
   save_path: "./data/raw/spam_or_not_spam.csv"              # Path to save training data to dataset2
