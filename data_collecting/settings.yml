@@ -2,6 +2,7 @@ proces_stages:                                              # 1 to start stage; 
   preprocess: 1                                             # Stemming data
   collect: 1                                                # Create new data from dataset
   filter: 1                                                 # Filter data
+  correlation_matrices: 1
 filter_stages:                                              # 1 to start filter option; 0 - to skip
   drop_minimum_count: 1
   drop_minimum_length: 1
