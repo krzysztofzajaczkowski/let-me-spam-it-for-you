@@ -59,7 +59,16 @@ def collect_dataset_process():
 
     # --- Preprocessing dataset - stemming words and prepare train and testing sets ------------------------------------
     if stages["preprocess"]:
+        """
+        Stemming data from raw emails and prepare test and train dataset
+        """
+
         log.info("Start preprocessing...")
+
+        # Stemming stop words
+        df_word_delete = pd.read_csv(dataset_params["raw_stop_words_path"], names=["text"], header=None).dropna()
+        df_word_delete["text"] = df_word_delete["text"].apply(lambda text: string_stemmer(text))
+        df_word_delete.to_csv(dataset_params["stop_words_path"], header=False, index=False)
 
         # Load raw data to dataframe
         df_dataset = pd.read_csv(dataset_paths["raw_path"], names=dataset_header, header=None).dropna()
@@ -78,9 +87,34 @@ def collect_dataset_process():
         log.info("Saved training dataset to: {0}".format(dataset_paths["save_path"]))
         log.info("Saved test dataset to: {0}".format(dataset_paths["test_path"]))
         log.info("Preprocessing ended successfully\n")
+    else:
+        log.info("Skip preprocessing, prepare raw data...")
+
+        # Load raw stop words
+        df_word_delete = pd.read_csv(dataset_params["raw_stop_words_path"], names=["text"], header=None).dropna()
+        df_word_delete.to_csv(dataset_params["stop_words_path"], header=False, index=False)
+
+        #  Load raw data to dataframe without stemming
+        df_dataset = pd.read_csv(dataset_paths["raw_path"], names=dataset_header, header=None).dropna()
+
+        # Prepare dataset to train and test sets
+        df_train_dataset, df_test_dataset = generate_dataset(dataset_params["training_size"], df_dataset)
+        log.info("Train dataset size: {0}".format(df_train_dataset.shape[0]))
+        log.info("Test dataset size: {0}".format(df_test_dataset.shape[0]))
+
+        # Save dataset
+        df_train_dataset.to_csv(dataset_paths["save_path"], header=False, index=False)
+        df_test_dataset.to_csv(dataset_paths["test_path"], header=False, index=False)
+        log.info("Saved training dataset to: {0}".format(dataset_paths["save_path"]))
+        log.info("Saved test dataset to: {0}".format(dataset_paths["test_path"]))
+        log.info("Saving raw mails ended successfully\n")
 
     # --- Collect data from preprocessed dataset to word: count form ---------------------------------------------------
     if stages["collect"]:
+        """
+        Stage that collect data to useful form
+        """
+
         log.info("Start collecting data...")
 
         # Load spam and ham dataset to dataframe
@@ -122,13 +156,21 @@ def collect_dataset_process():
 
     # --- Filter data from wrong or unnecessary words ------------------------------------------------------------------
     if stages["filter"]:
+        """
+        Stage that remove unnecessary words from processed csv files and print data logs.
+        Filter options:
+            - drop_minimum_count: remove words that occurred in less than minimum emails
+            - drop_minimum_length: remove words shorter than minimum letters length
+            - drop_stop_words: remove stop words loaded from file
+            - sort_alphabetically: sort words
+        Additionally it choose words only appear in both spam and ham mails.
+        """
+
         log.info("Start filtering data...")
         filter_stages = config["filter_stages"]
 
-        # Stemming stop words
+        # Load stop words
         df_word_delete = pd.read_csv(dataset_params["stop_words_path"], names=["text"], header=None).dropna()
-        df_word_delete["text"] = df_word_delete["text"].apply(lambda text: string_stemmer(text))
-        df_word_delete.to_csv(dataset_params["stop_words_path"], header=False, index=False)
 
         # read files
         df_spam = pd.read_csv(dataset_paths["unique_spam_path"], names=['word', 'col_count'], header=None).dropna()
@@ -221,8 +263,32 @@ def collect_dataset_process():
         df_ham.to_csv(dataset_paths["filter_ham_path"], index=False, header=header_ham.loc[0].values)
         log.info("Saved filtered spam data to: {0}".format(dataset_paths["filter_spam_path"]))
         log.info("Saved filtered ham data to: {0}".format(dataset_paths["filter_ham_path"]))
-
         log.info("Filtering data ended successfully\n")
+    else:
+        log.info("Skip filtering data...")
+
+        # read files
+        df_spam = pd.read_csv(dataset_paths["unique_spam_path"], names=['word', 'col_count'], header=None).dropna()
+        df_ham = pd.read_csv(dataset_paths["unique_ham_path"], names=['word', 'col_count'], header=None).dropna()
+
+        # First row is header, rest is data
+        header_spam = df_spam[0:1]
+        header_ham = df_ham[0:1]
+        df_spam = df_spam[1:-1]
+        df_ham = df_ham[1:-1]
+
+        # Drop differences between two dataframes
+        df_diff = pd.concat([df_spam['word'], df_ham['word']]).drop_duplicates(keep=False)
+        for word in df_diff:
+            df_spam = df_spam[df_spam['word'] != word]
+            df_ham = df_ham[df_ham['word'] != word]
+
+        # Save unfiltered data
+        df_spam.to_csv(dataset_paths["filter_spam_path"], index=False, header=header_spam.loc[0].values)
+        df_ham.to_csv(dataset_paths["filter_ham_path"], index=False, header=header_ham.loc[0].values)
+        log.info("Saved unfiltered spam data to: {0}".format(dataset_paths["filter_spam_path"]))
+        log.info("Saved unfiltered ham data to: {0}".format(dataset_paths["filter_ham_path"]))
+        log.info("Saving unfiltered data ended successfully\n")
 
     log.info("Collecting data process ended.\n")
 
