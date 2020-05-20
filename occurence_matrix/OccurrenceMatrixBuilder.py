@@ -82,7 +82,13 @@ class OccurrenceMatrixBuilder:
         self.words_list = list(filtered_words_df.word)
 
     def create_words_matrix(self):
+        """
+            Create 2d matrix(dictionary) to count pairs of words in filter words
+
+            :return: 2d matrix(dictionary) with filter words as keys
+        """
         if self.words_list is not None:
+            # create 2d dictionary
             words_matrix = defaultdict(dict)
             for x in self.words_list:
                 for y in self.words_list:
@@ -93,22 +99,42 @@ class OccurrenceMatrixBuilder:
             raise ValueError("Words list is None!")
 
     def read_mail_to_words_matrix(self, words_matrix, mail: str):
+        """
+            Read e-mail and increment counter of key (word1,word2) if such pair occured in mail
+
+            :param words_matrix: 2d matrix(dictionary) with filter words as keys
+            :param mail: e-mail in form of a string
+        """
         if None not in [self.correlation_distance, self.words_list]:
             content = mail.split()
+            counted_pairs = set()
             for i in range(len(content) - self.correlation_distance):
                 for j in range(i, i + self.correlation_distance):
                     if content[i] in self.words_list and content[j] in self.words_list:
                         if i is not j:
+                            counted_pairs.add((content[i], content[j]))
                             words_matrix[content[j]][content[i]] = words_matrix[content[j]][content[i]] + 1
                             words_matrix[content[i]][content[j]] = words_matrix[content[i]][content[j]] + 1
         else:
             raise ValueError("Correlation distance or words list are None!")
 
     def save_words_matrix_to_csv(self, words_matrix_df, file_path):
+        """
+            Save 2d dictionary of words matrix to a csv file as w1,w2,counter
+
+            :param words_matrix_df: data frame of pairs of words and their number of occurences in mails
+            :param file_path: where to save csv file
+        """
         words_matrix_df = words_matrix_df[words_matrix_df['n_o_occurences'] > 0]
-        words_matrix_df.to_csv(file_path, index=True, header=True)
+        words_matrix_df.to_csv(file_path, index=True, header=False)
 
     def create_data_frame_from_words_matrix(self, words_matrix):
+        """
+            Creating pandas data frame from 2d dictionary of correlated words
+
+            :param words_matrix: 2d dictionary of correlated words
+            :return: data frame of correlated words
+        """
         if self.words_list is not None:
             words_matrix_df = pd.DataFrame.from_dict(
                 {(i, j): words_matrix[i][j] for i in self.words_list for j in self.words_list}, orient="index",
@@ -119,6 +145,9 @@ class OccurrenceMatrixBuilder:
             raise ValueError("Words list is None!")
 
     def build_ham_matrix(self):
+        """
+            Building matrix of correlated words for ham mails
+        """
         if self.ham_df is not None and self.words_list is not None and self.correlation_distance is not None:
             words_matrix = self.create_words_matrix()
             for i in range(len(self.ham_df)):
@@ -129,6 +158,9 @@ class OccurrenceMatrixBuilder:
             raise ValueError("ham mails dataframe / list of words / correlation distance are None!")
 
     def build_spam_matrix(self):
+        """
+            Building matrix of correlated words for spam mails
+        """
         if self.spam_df is not None and self.words_list is not None and self.correlation_distance is not None:
             words_matrix = self.create_words_matrix()
             for i in range(len(self.spam_df)):
@@ -139,9 +171,19 @@ class OccurrenceMatrixBuilder:
             raise ValueError("spam mails dataframe / list of words / correlation distance are None!")
 
     def build_mail_matrix(self):
+        """
+            Building matrix of correlated words for all mails
+        """
         self.mail_words_matrix_df = self.spam_words_matrix_df + self.ham_words_matrix_df
 
     def save_matrices(self, ham_file_path, spam_file_path, mail_file_path):
+        """
+            Saving data frames of correlated words matrices to corresponding csv files
+
+            :param ham_file_path: file path to save ham matrix
+            :param spam_file_path: file path to save spam matrix
+            :param mail_file_path: file path to save all mails matrix
+        """
         self.save_words_matrix_to_csv(self.ham_words_matrix_df, ham_file_path)
         self.save_words_matrix_to_csv(self.spam_words_matrix_df, spam_file_path)
         self.save_words_matrix_to_csv(self.mail_words_matrix_df, mail_file_path)
