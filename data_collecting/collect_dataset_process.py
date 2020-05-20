@@ -263,21 +263,21 @@ def collect_dataset_process():
             df_ham = df_ham.sort_values(by=['word'])
             df_spam = df_spam.sort_values(by=['word'])
 
-            # Filter mails content
-            if filter_stages['filter_content']:
-                raw_emails_file_path = config[dataset_number]['raw_path']
-                filtered_words_file_path = config[dataset_number]['filter_ham_path']
-                filtered_mails_file_path = config[dataset_number]['filtered_mails_file_path']
-                filtered_words_set_file_path = config[dataset_number]['filtered_words_set_file_path']
+        # Filter mails content
+        if filter_stages['filter_content']:
+            raw_emails_file_path = config[dataset_number]['raw_path']
+            filtered_words_file_path = config[dataset_number]['filter_ham_path']
+            filtered_mails_file_path = config[dataset_number]['filtered_mails_file_path']
+            filtered_words_set_file_path = config[dataset_number]['filtered_words_set_file_path']
 
-                # filter mails
-                mail_filter = MailContentFilter()
-                mail_filter.load_dataframe(raw_emails_file_path)
-                mail_filter.load_filtered_words_set(filtered_words_file_path)
-                mail_filter.filter_dataset()
-                # save filtered content and set of filter words to csv files
-                mail_filter.export_dataset(filtered_mails_file_path)
-                mail_filter.export_filter_set(filtered_words_set_file_path)
+            # filter mails
+            mail_filter = MailContentFilter()
+            mail_filter.load_dataframe(raw_emails_file_path)
+            mail_filter.load_filtered_words_set(filtered_words_file_path)
+            mail_filter.filter_dataset()
+            # save filtered content and set of filter words to csv files
+            mail_filter.export_dataset(filtered_mails_file_path)
+            mail_filter.export_filter_set(filtered_words_set_file_path)
 
         # Save
         df_spam.to_csv(dataset_paths["filter_spam_path"], index=False, header=header_spam.loc[0].values)
@@ -313,7 +313,7 @@ def collect_dataset_process():
 
     if stages["correlation_matrices"]:
 
-        log.info("Start bulding correlation matrices data...")
+        log.info("Start building correlation matrices data...")
 
         correlation_matrices_options = config["correlation_matrices"]
         filtered_mails_file_path = config[dataset_number]['filtered_mails_file_path']
