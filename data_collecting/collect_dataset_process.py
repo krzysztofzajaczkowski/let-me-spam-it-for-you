@@ -7,12 +7,12 @@ from data_collecting.functions.logger import create_logger
 from data_collecting.functions.stemming_email import string_stemmer
 from data_collecting.functions.generate_dataset import generate_dataset
 
-
 # ----------------------------------------------- FUNCTIONS ------------------------------------------------------------
 from occurence_matrix.MailContentFilter import MailContentFilter
 from occurence_matrix.OccurrenceMatrixBuilder import OccurrenceMatrixBuilder
 
 
+# ----------------------------------------------- FUNCTIONS ------------------------------------------------------------
 def _create_dict_unique(df_org, header, split_char=' '):
     """
     Split text data to numpy array and create column with unique word dictionary
@@ -311,6 +311,7 @@ def collect_dataset_process():
         log.info("Saved unfiltered ham data to: {0}".format(dataset_paths["filter_ham_path"]))
         log.info("Saving unfiltered data ended successfully\n")
 
+    # --- Build correlation matrices -----------------------------------------------------------------------------------
     if stages["correlation_matrices"]:
 
         log.info("Start building correlation matrices data...")
@@ -323,7 +324,8 @@ def collect_dataset_process():
         mail_words_matrix = correlation_matrices_options['mail_words_matrix']
         correlation_type = correlation_matrices_options['correlation_type']
         explicit_correlation_distance = correlation_matrices_options['explicit_correlation_distance']
-        percentage_of_avg_n_o_words_correlation = correlation_matrices_options['percentage_of_avg_n_o_words_correlation']
+        percentage_of_avg_n_o_words_correlation = correlation_matrices_options[
+            'percentage_of_avg_n_o_words_correlation']
 
         # build occurence matrices
         builder = OccurrenceMatrixBuilder()
@@ -341,6 +343,7 @@ def collect_dataset_process():
         log.info("Saving spam emails correlation matrix to: {0}".format(spam_words_matrix))
         log.info("Saving all emails correlation matrix to: {0}".format(mail_words_matrix))
         builder.save_matrices(ham_words_matrix, spam_words_matrix, mail_words_matrix)
+        log.info("Saving correlation matrices data complete\n")
 
     else:
         log.info("Skip building correlation matrices data...")

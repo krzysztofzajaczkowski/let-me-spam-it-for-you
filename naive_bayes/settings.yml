@@ -2,6 +2,7 @@ proces_stages:                                                      # 1 to start
   stemm_data: 1                                                     # Stemm mails
   naive_beyes: 1                                                    # Stemming data
   matrix_beyes: 1                                                   # Create new data from dataset
+  mixed_beyes: 1                                                   # Create new data from dataset
 dataset_params:
   dataset_number: 1                                                 # Number of dataset to use
   headers: ["text", "is_spam"]                                      # Headers to all csv in /data/raw csv

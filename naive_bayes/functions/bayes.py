@@ -1,9 +1,9 @@
 def bayes(mail, df_spam, spam_count, df_ham, ham_count):
     """
     :param mail: string value with email text
-    :param df_spam: words from with counter in how many mail word appear
+    :param df_spam: words with counter in how many spam mail word appear
     :param spam_count: All spam emails
-    :param df_ham: word from ham with counter in how many mail word appear
+    :param df_ham: words with counter in how many ham mail word appear
     :param ham_count: All ham emails
     :return: mail spam probability
     """

@@ -5,11 +5,17 @@ from data_collecting.functions.stemming_email import string_stemmer
 from data_collecting.functions.logger import create_logger
 from naive_bayes.functions.bayes import bayes
 from naive_bayes.functions.matrix_bayes import matrix_bayes
+from naive_bayes.functions.mixed_bayes import mixed_bayes
 
 
-# -------------------
-
+# ----------------------------------------------- FUNCTIONS ------------------------------------------------------------
 def load_words_matrix(path):
+    """
+    load dataframe
+    :param path: path to file
+    :return: dataframe
+    """
+
     df = pd.read_csv(path, names=['word1', 'word2', 'col_count'])
     df['id'] = df[['word1', 'word2']].apply(lambda x: ','.join(x), axis=1)
     df = df.set_index('id').drop(columns=['word1', 'word2'])
@@ -17,7 +23,7 @@ def load_words_matrix(path):
     return df
 
 
-# ----------------------------------------
+# ----------------------------------------------- MAIN BODY ------------------------------------------------------------
 def testing_dataset_process():
     # Init values
     log = create_logger('testing_dataset')
@@ -104,7 +110,8 @@ def testing_dataset_process():
 
         # Classify mail as spam or ham
         df_test_mails['spam_prob'] = df_test_mails[dataset_header[0]].apply(
-            lambda mail: matrix_bayes(mail, dataset_params['correlation_distance'], df_spam, spam_count, df_ham, ham_count))
+            lambda mail: matrix_bayes(mail, dataset_params['correlation_distance'], df_spam, spam_count, df_ham,
+                                      ham_count))
         df_test_mails['spam_class'] = df_test_mails['spam_prob'].apply(lambda x: 1 if x > spam_threshold else 0)
 
         # Analise data
@@ -114,8 +121,10 @@ def testing_dataset_process():
             if df_test_mails.iloc[i]['spam_class'] != df_test_mails.iloc[i][dataset_header[1]]:
                 if df_test_mails.iloc[i]['spam_class'] == 0:
                     wrong_spam += 1
+                    #print(df_test_mails.iloc[i]['spam_prob'])
                 if df_test_mails.iloc[i]['spam_class'] == 1:
                     wrong_ham += 1
+                    #print(df_test_mails.iloc[i]['spam_prob'])
 
         log.info("Wrongly classify spam mails: {0}%".format(
             int(wrong_spam * 10000 / df_test_mails[df_test_mails[dataset_header[1]] == 1][
@@ -123,11 +132,60 @@ def testing_dataset_process():
         log.info("Wrongly classify ham mails: {0}%".format(
             int(wrong_ham * 10000 / df_test_mails[df_test_mails[dataset_header[1]] == 0][
                 dataset_header[1]].count()) / 100))
-        log.info("Naive-beyes classify accuracy: {0}%".format(
+        log.info("Matrix beyes classify accuracy: {0}%".format(
             int((df_test_mails.shape[0] - wrong_ham - wrong_spam) * 10000 / df_test_mails.shape[0]) / 100))
         log.info("Testing complete\n")
 
+    # -------------------------------------------------------------------------------------------------
+    if stages["mixed_beyes"]:
+        log.info("Start testing mixed-bayes method...")
+
+        ham_words_matrix_path = config[dataset_number]["ham_words_matrix"]
+        spam_words_matrix_path = config[dataset_number]["spam_words_matrix"]
+
+        # Load spam words with first column as index and second as value
+        df_spam = pd.read_csv(dataset_paths["filter_spam_path"], index_col=0, names=['col_count'])
+        spam_count = df_spam[0:1]['col_count'].values[0]
+        df_ham = pd.read_csv(dataset_paths["filter_ham_path"], index_col=0, names=['col_count'])
+        ham_count = df_ham[0:1]['col_count'].values[0]
+
+        df_matrix_spam = load_words_matrix(spam_words_matrix_path)
+        df_matrix_ham = load_words_matrix(ham_words_matrix_path)
+
+        log.info("Dataset on occurence matrix with: {0} ham mails; {1} spam mail".format(ham_count, spam_count))
+        log.info("Dataset: {0} words; {1} ham mails; {2} spam mail".format(df_ham.shape[0], ham_count, spam_count))
+
+        # Classify mail as spam or ham
+        df_test_mails['spam_prob'] = df_test_mails[dataset_header[0]].apply(
+            lambda mail: mixed_bayes(mail, dataset_params['correlation_distance'], df_spam, spam_count, df_ham,
+                                      ham_count, df_matrix_spam, df_matrix_ham))
+        df_test_mails['spam_class'] = df_test_mails['spam_prob'].apply(lambda x: 1 if x > spam_threshold else 0)
+
+        # Analise data
+        wrong_spam = 0
+        wrong_ham = 0
+        for i in df_test_mails.index:
+            if df_test_mails.iloc[i]['spam_class'] != df_test_mails.iloc[i][dataset_header[1]]:
+                if df_test_mails.iloc[i]['spam_class'] == 0:
+                    wrong_spam += 1
+                    #print(df_test_mails.iloc[i]['spam_prob'])
+                if df_test_mails.iloc[i]['spam_class'] == 1:
+                    wrong_ham += 1
+                    #print(df_test_mails.iloc[i]['spam_prob'])
+
+        log.info("Wrongly classify spam mails: {0}%".format(
+            int(wrong_spam * 10000 / df_test_mails[df_test_mails[dataset_header[1]] == 1][
+                dataset_header[1]].count()) / 100))
+        log.info("Wrongly classify ham mails: {0}%".format(
+            int(wrong_ham * 10000 / df_test_mails[df_test_mails[dataset_header[1]] == 0][
+                dataset_header[1]].count()) / 100))
+        log.info("Mixed method classify accuracy: {0}%".format(
+            int((df_test_mails.shape[0] - wrong_ham - wrong_spam) * 10000 / df_test_mails.shape[0]) / 100))
+        log.info("Testing complete\n")
+
+
     log.info("Test process end\n")
+
 
 if __name__ == '__main__':
     testing_dataset_process()
