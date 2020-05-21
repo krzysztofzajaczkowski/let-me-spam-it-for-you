@@ -146,8 +146,10 @@ def testing_dataset_process():
         # Load spam words with first column as index and second as value
         df_spam = pd.read_csv(dataset_paths["filter_spam_path"], index_col=0, names=['col_count'])
         spam_count = df_spam[0:1]['col_count'].values[0]
+        df_spam = df_spam[1:]
         df_ham = pd.read_csv(dataset_paths["filter_ham_path"], index_col=0, names=['col_count'])
         ham_count = df_ham[0:1]['col_count'].values[0]
+        df_ham = df_ham[1:]
 
         df_matrix_spam = load_words_matrix(spam_words_matrix_path)
         df_matrix_ham = load_words_matrix(ham_words_matrix_path)
